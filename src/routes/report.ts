@@ -1,6 +1,9 @@
 import express, { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import PDFDocument from "pdfkit";
+import fs from "fs";
 import "dotenv/config";
+import User from "../models/user";
 
 require("dotenv").config();
 const router = express.Router();
@@ -10,15 +13,11 @@ if (!SECRET_KEY) {
   throw new Error("A variável de ambiente SECRET_KEY_JWT não está definida");
 }
 
-// Defina a interface do usuário que inclui o nível
 interface IUser extends JwtPayload {
-  name: string;
-  email: string;
-  password: string;
+  id: string;
   level: 1 | 2 | 3 | 4 | 5;
 }
 
-// Middleware para autenticação do token e verificação do nível do usuário
 const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
@@ -39,13 +38,62 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   });
 };
 
-// Endpoint para imprimir o relatório
 router.get(
-  "/report",
+  "/report-pdf",
   authenticateToken,
   async (req: Request, res: Response) => {
+    
     try {
-      res.json({ message: "Relatório impresso" });
+      const users = await User.find();
+      const doc = new PDFDocument();
+
+      const headers = ["ID", "Name", "Email", "Level"];
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", "attachment; filename=report_users.pdf");
+
+      doc.pipe(res);
+
+      doc.font("Helvetica-Bold").fontSize(18).text("Users Report", {
+        align: "center"
+      })
+
+      const tableTop = 110;
+      const rowHeight = 20;
+      const pageHeight = doc.page.height - doc.page.margins.bottom;
+
+      let yPosition = tableTop;
+
+      const drawTableRow = (y: number, row: string[]) => {
+        let x = 30;
+
+        row.forEach((text) => {
+          doc.fontSize(8).text(text, x, y, { align: "left", width: 150 });
+          x += 150;
+        });
+
+        doc.moveTo(30, y + rowHeight).lineTo(580, y + rowHeight).stroke();
+      };
+
+      drawTableRow(yPosition, headers);
+      yPosition += rowHeight + 10;
+
+      drawTableRow(tableTop, headers);
+      doc.font("Helvetica");
+
+      users.forEach((user, index) => {
+        if (yPosition + rowHeight > pageHeight) {
+          doc.addPage();
+          yPosition = tableTop;
+          drawTableRow(yPosition, headers);
+          yPosition += rowHeight + 10;
+        }
+        const row = [user.id.toString(), user.name, user.email, user.level];
+        drawTableRow(yPosition, row);
+        yPosition += rowHeight + 10;
+      });
+
+      doc.end();
     } catch (error) {
       res.status(500).json({ message: "Erro ao imprimir relatório", error });
     }

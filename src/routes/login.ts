@@ -27,8 +27,7 @@ router.post("/login", async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Email ou senha incorretos" });
     }
 
-    // Gerar token JWT
-    const token = jwt.sign({ id: user._id }, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id, level: user.level }, SECRET_KEY, { expiresIn: '1h' });
 
     res.json({ message: "Login bem-sucedido", token });
   } catch (error) {
