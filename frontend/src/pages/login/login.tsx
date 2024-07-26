@@ -22,7 +22,7 @@ function Login() {
     };
   
     return (
-      <div className="flex items-center justify-center w-screen h-screen">
+      <div className="flex items-center justify-center w-screen h-full">
         <Box className="w-2/4 h-2/4 flex">
           <div className="flex-1 p-4 flex flex-col justify-center items-center">
             <h1 className="text-3xl font-bold mb-14">SuuS</h1>
@@ -46,7 +46,7 @@ function Login() {
           </div>
           <div className="flex-1 p-4">
             <img
-              src="https://c.tenor.com/5Y9gxegWroAAAAAd/tenor.gif"
+              src="https://c.tenor.com/gQV5VzHLWQIAAAAd/tenor.gif"
               alt="SuuS"
               className="w-full h-full object-cover rounded-lg"
             />
