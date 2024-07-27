@@ -9,6 +9,8 @@ import Dashboard from "./pages/dashboard";
 import Footer from "./components/Footer";
 import { Sidebar } from "./components/SideMenu";
 import { Users } from "./pages/users/users";
+import ProtectedRoute from "./components/ProtectedRoute";
+
 
 function App() {
   const location = useLocation();
@@ -21,8 +23,10 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/users" element={<Users />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/users" element={<Users />} />
+            </Route>
           </Routes>
         </main>
         {/* <Footer /> */}

@@ -1,11 +1,13 @@
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 
 type BoxProps = {
   className?: string;
 };
 
 export const Sidebar: React.FC<BoxProps> = ({ className }) => {
+  const navigate = useNavigate();
   return (
     <div className={cn("pb-12", className)}>
       <div className="space-y-4 py-4">
@@ -22,7 +24,7 @@ export const Sidebar: React.FC<BoxProps> = ({ className }) => {
             Control
           </h2>
           <div className="space-y-1">
-            <Button variant="ghost" size="sm" className="w-full justify-start">
+            <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => navigate("/users")}>
               Users
             </Button>
           </div>

@@ -1,35 +1,40 @@
-import { useEffect, useState } from "react";
-import { IUser } from "./interface";
-import axios from "axios";
+import { useEffect } from "react";
 import List from "@/components/List";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchUsersFailure,
+  fetchUsersRequest,
+  fetchUsersSuccess,
+} from "./store/reducers";
+import { RootState } from "@/redux/store";
 
 export const Users: React.FC = () => {
-  const [users, setUsers] = useState<IUser[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const dispatch = useDispatch();
+  const { loading, users, error } = useSelector(
+    (state: RootState) => state.users
+  );
 
   useEffect(() => {
     const fetchUsers = async () => {
+      dispatch(fetchUsersRequest());
       try {
-        const response = await axios.get('http://localhost:3000/api/users');
-        setUsers(response.data);
-      } catch (error) {
-        setError('Erro ao buscar usuários');
-      } finally {
-        setLoading(false);
+        const response = await fetch("http://localhost:3000/api/users");
+        const data = await response.json();
+        dispatch(fetchUsersSuccess(data));
+      } catch (err) {
+        if (err instanceof Error) {
+          dispatch(fetchUsersFailure(err.message));
+        } else {
+          dispatch(fetchUsersFailure("An unknown error occurred"));
+        }
       }
     };
 
     fetchUsers();
-  }, []);
+  }, [dispatch]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="h-screen flex items-center justify-center p-5">
