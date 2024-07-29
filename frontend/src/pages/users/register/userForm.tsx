@@ -33,7 +33,6 @@ const UserForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
-    // Aqui você pode adicionar a lógica para enviar os dados do formulário para o servidor
   };
 
   return (
