@@ -12,7 +12,7 @@ router.post("/users", async (req, res) => {
     await newUser.save();
     res.status(201).json(newUser);
   } catch (error) {
-    res.status(500).json({ message: "Erro ao criar usuário", error });
+    res.status(500).json({ message: "Failed to create user.", error });
   }
 });
 
@@ -21,7 +21,7 @@ router.get("/users", async (req, res) => {
     const users = await User.find();
     res.json(users);
   } catch (error) {
-    res.status(500).json({ message: "Erro ao buscar usuários", error });
+    res.status(500).json({ message: "Failed to search for users.", error });
   }
 });
 
@@ -30,7 +30,7 @@ router.get("/users/:id", async (req, res) => {
     const user = await User.findById(req.params.id);
     res.json(user);
   } catch (error) {
-    res.status(500).json({ message: "Erro ao buscar usuário", error });
+    res.status(500).json({ message: "Failed to search user.", error });
   }
 });
 
@@ -41,16 +41,16 @@ router.put("/users/:id", async (req, res) => {
     });
     res.json(user);
   } catch (error) {
-    res.status(500).json({ message: "Erro ao atualizar usuário", error });
+    res.status(500).json({ message: "Failed to update user.", error });
   }
 });
 
 router.delete("/users/:id", async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
-    res.json({ message: "Usuário removido com sucesso" });
+    res.json({ message: "User removed." });
   } catch (error) {
-    res.status(500).json({ message: "Erro ao remover usuário", error });
+    res.status(500).json({ message: "Failed to remove user.", error });
   }
 });
 
